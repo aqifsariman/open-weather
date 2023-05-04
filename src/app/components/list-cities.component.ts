@@ -12,6 +12,7 @@ export class ListCitiesComponent implements OnInit {
   constructor(private weatherSvc: WeatherService) {}
 
   ngOnInit(): void {
+    this.weatherSvc.sortCities();
     this.cities = this.weatherSvc.countries;
   }
 }
