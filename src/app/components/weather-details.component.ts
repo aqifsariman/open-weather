@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment.development';
 import { WeatherService } from '../services/weather.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Weather } from '../models/Weather';
+import { CitiesRepository } from '../services/cities.repo';
 
 @Component({
   selector: 'app-weather-details',
@@ -22,7 +23,8 @@ export class WeatherDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private weatherSvc: WeatherService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private citiesRepo: CitiesRepository
   ) {}
 
   ngOnInit(): void {
@@ -38,16 +40,16 @@ export class WeatherDetailsComponent implements OnInit, OnDestroy {
   private getWeatherDetailsFromAPI(city: string) {
     this.weatherSvc
       .getWeather(city, this.openWeatherApiKey)
-      .then((result) => {
+      .then(async (result) => {
         console.log('Results: ', result);
-        const cityObj = this.weatherSvc.getCityUrl(city);
+        const cityImageUrl = await this.citiesRepo.getCityImageUrl(city);
         this.model = new Weather(
           city,
           result.main.temp,
           result.main.pressure,
           result.main.humidity,
           result.weather[0].description,
-          cityObj!.imageUrl,
+          cityImageUrl,
           result.wind.speed,
           result.wind.degree
         );
